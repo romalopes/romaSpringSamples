@@ -1,0 +1,52 @@
+buildscript {
+    repositories {
+        maven { url "http://repo.spring.io/libs-snapshot" }
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.0'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'war'
+apply plugin: 'jetty'
+apply plugin: 'tomcat'
+
+war {
+    baseName = 'romaSpringSimpleMVC'
+    version =  '0.1.0'
+}
+
+/* Change context path (base url). otherwise defaults to name of project */
+jettyRunWar.contextPath = ''
+
+repositories {
+    mavenCentral()
+    maven { url "http://repo.spring.io/libs-snapshot" }
+}
+
+dependencies {
+    def tomcatVersion = '7.0.11'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+            "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    }
+
+
+    compile("org.springframework:spring-core:3.2.5.RELEASE")
+    compile("org.springframework:spring-web:3.2.5.RELEASE")
+    compile('org.springframework:spring-webmvc:3.2.5.RELEASE')
+    providedCompile 'javax.servlet:servlet-api:2.5'  //Not used in this project
+    runtime 'javax.servlet:jstl:1.1.2'  //Not used in this project
+    testCompile("junit:junit:4.11")
+
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.8'
+}
